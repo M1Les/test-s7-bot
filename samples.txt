@@ -1,0 +1,27 @@
+﻿ngrok http -subdomain=sibirabot -host-header=localhost 3979
+ngrok http -host-header=localhost 3979
+
+
+
+мы везем кошку на 8 кг в париж
+мы везем кошку на 8 кг из москвы в париж
+мы везем кошку из москвы в париж
+cat 8 kg from paris to moscow
+what is the cost of transportation of 8 kg cat from cairo to moscow
+
+what is the cost of transportation of 8 kg cat to moscow
+надо перевезти большую собаку в лондон
+надо перевезти большую собаку из москвы в лондон
+надо перевезти большую собаку из москвы в новосибирск
+
+how much for 3 kg parrot from london to moscow
+Сколько стоит провоз животного
+8 кг
+около 8 кг
+12 40 55
+париж
+каир
+:debug:
+:stub:
+
+как насчёт багажа из 

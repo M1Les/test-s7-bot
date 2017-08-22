@@ -1,0 +1,10 @@
+syntax: glob
+
+.idea/**
+_samples/**
+packages/**
+*.suo
+*.user
+*.DotSettings
+**/bin/**
+**/obj/**

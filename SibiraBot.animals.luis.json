@@ -1,0 +1,1016 @@
+{
+  "luis_schema_version": "2.1.0",
+  "versionId": "0.1",
+  "name": "SibiraBot",
+  "desc": "",
+  "culture": "en-us",
+  "intents": [
+    {
+      "name": "AnimalTransportation"
+    },
+    {
+      "name": "BaggageRestrictions"
+    },
+    {
+      "name": "Dimension"
+    },
+    {
+      "name": "None"
+    },
+    {
+      "name": "Utilities.Cancel",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "Cancel"
+      }
+    },
+    {
+      "name": "Utilities.Confirm",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "Confirm"
+      }
+    },
+    {
+      "name": "Utilities.FinishTask",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "FinishTask"
+      }
+    },
+    {
+      "name": "Utilities.Goback",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "Goback"
+      }
+    },
+    {
+      "name": "Utilities.Help",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "Help"
+      }
+    },
+    {
+      "name": "Utilities.Repeat",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "Repeat"
+      }
+    },
+    {
+      "name": "Utilities.ShowNext",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "ShowNext"
+      }
+    },
+    {
+      "name": "Utilities.ShowPrevious",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "ShowPrevious"
+      }
+    },
+    {
+      "name": "Utilities.StartOver",
+      "inherits": {
+        "domain_name": "Utilities",
+        "model_name": "StartOver"
+      }
+    },
+    {
+      "name": "Weight"
+    }
+  ],
+  "entities": [
+    {
+      "name": "AirportCode"
+    },
+    {
+      "name": "Animal"
+    },
+    {
+      "name": "Flight"
+    },
+    {
+      "name": "From"
+    },
+    {
+      "name": "Location",
+      "children": [
+        "LocationFrom",
+        "LocationTo"
+      ]
+    },
+    {
+      "name": "To"
+    },
+    {
+      "name": "WeightUnit"
+    }
+  ],
+  "composites": [
+    {
+      "name": "GFrom",
+      "children": [
+        "geography",
+        "From"
+      ]
+    },
+    {
+      "name": "GTo",
+      "children": [
+        "geography",
+        "To"
+      ]
+    },
+    {
+      "name": "LFrom",
+      "children": [
+        "From",
+        "Location::LocationFrom"
+      ]
+    },
+    {
+      "name": "LTo",
+      "children": [
+        "Location::LocationTo",
+        "To"
+      ]
+    },
+    {
+      "name": "Route",
+      "children": [
+        "Location::LocationFrom",
+        "Location::LocationTo"
+      ]
+    },
+    {
+      "name": "Weight",
+      "children": [
+        "number",
+        "WeightUnit"
+      ]
+    }
+  ],
+  "closedLists": [],
+  "bing_entities": [
+    "geography",
+    "number"
+  ],
+  "actions": [],
+  "model_features": [
+    {
+      "name": "Animals",
+      "mode": true,
+      "words": "cat,dog,bird,snake,parrot,tortoise,alligator,rabbit,turtle,animal,lizard,monkey,crocodile,fish,reptile,pig,tiger,iguana,rat,ferret,hamster",
+      "activated": true
+    },
+    {
+      "name": "Baggage",
+      "mode": true,
+      "words": "baggage,luggage",
+      "activated": true
+    },
+    {
+      "name": "Take",
+      "mode": true,
+      "words": "take,carry,bring",
+      "activated": true
+    },
+    {
+      "name": "WeightUnits",
+      "mode": true,
+      "words": "kg,lbs,pounds,ounces",
+      "activated": true
+    }
+  ],
+  "regex_features": [
+    {
+      "name": "AirportCodeRegex",
+      "pattern": "[a-z]{3}",
+      "activated": true
+    }
+  ],
+  "utterances": [
+    {
+      "text": "go back",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "cancel",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "please help me",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "can you help me?",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "okay",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "help me please",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "cancel it",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "i'm done",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "help me with this",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "repeat that please",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "ok thanks",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "i need your help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "cancel navigation",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "i think i'm done",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "i'm done with that",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "repeat again",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "go back.",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "i want to cancel",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "next please",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "show me the next",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "go next",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "go back to the beginning",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "restart please",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "let's restart",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "i am done.",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "not tomorrow please",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "can you help me here",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "okay for now",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "how much baggage can i take",
+      "intent": "BaggageRestrictions",
+      "entities": []
+    },
+    {
+      "text": "i am flying to moscow. can you tell how much baggage i can take",
+      "intent": "BaggageRestrictions",
+      "entities": []
+    },
+    {
+      "text": "can you tell me baggage restrictions for the flight to moscow",
+      "intent": "BaggageRestrictions",
+      "entities": []
+    },
+    {
+      "text": "how much kg allowed on the flight to atlanta",
+      "intent": "BaggageRestrictions",
+      "entities": []
+    },
+    {
+      "text": "how much baggage can i take on the flight to paris",
+      "intent": "BaggageRestrictions",
+      "entities": []
+    },
+    {
+      "text": "how much baggage allowed to toronto",
+      "intent": "BaggageRestrictions",
+      "entities": []
+    },
+    {
+      "text": "Alright I am confirming",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "A yes from me",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "Okay for now",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "yep agreed",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "Sure I confirm",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "yes i saw",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "Yeah ohh I confirm",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "good I am confirming",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "Cancel brawl",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "cancel expanse",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "wait never mind i just told you never mind",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "\"reject it, cancel\"",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "I want to cancel",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "cancel silent hours",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "Go back to google please",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "\"go back, why are you here?\"",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "Go back.",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "go back on music player",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "Never mind go back",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "go back to my contacts",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "go back to amazon",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "i need to go back",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "I need your help",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "Can you help me?",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "help me to start",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "help me to understand more please",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "help with my device please",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "please help me i want to finish",
+      "intent": "Utilities.Help",
+      "entities": []
+    },
+    {
+      "text": "repeat 10 times.",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "repeat my name three times",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "repeat start time",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "repeat last question please",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "repeat selection please",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "repeat it again",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "repeat again please",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "repeat that last joke",
+      "intent": "Utilities.Repeat",
+      "entities": []
+    },
+    {
+      "text": "show me the next please",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "Go Next",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "can you click next",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "second one please",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "Next please",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "Show the next please",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "the next please",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "let me go next please",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "please go next",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "please show previous.",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "Show the previous please",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "I want to display the previous message",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "previous one please",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "Click on previous for me",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "Let me check the previous item please",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "Show me the previous",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "Can you show me the previous please?",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "If you would please turn to previous",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "Display the previous for me",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "Please restart the search",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "Let me start it again from scratch",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "Restart please",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "Can you restart for me?",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "I want to do restart",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "Let's restart",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "Delete that and start again",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "Please do restarting",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "I need to begin over and restart",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "I am done.",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "Let it finished please",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "we finished our last task",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "ohh finished",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "yeah l just finished this one",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "finished please",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "i'm done y'all",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "cancel brawl",
+      "intent": "Utilities.Cancel",
+      "entities": []
+    },
+    {
+      "text": "alright i am confirming",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "a yes from me",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "sure i confirm",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "yeah ohh i confirm",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "good i am confirming",
+      "intent": "Utilities.Confirm",
+      "entities": []
+    },
+    {
+      "text": "go back to google please",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "never mind go back",
+      "intent": "Utilities.Goback",
+      "entities": []
+    },
+    {
+      "text": "show the next please",
+      "intent": "Utilities.ShowNext",
+      "entities": []
+    },
+    {
+      "text": "show the previous please",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "i want to display the previous message",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "click on previous for me",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "let me check the previous item please",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "show me the previous",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "can you show me the previous please?",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "if you would please turn to previous",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "display the previous for me",
+      "intent": "Utilities.ShowPrevious",
+      "entities": []
+    },
+    {
+      "text": "please restart the search",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "let me start it again from scratch",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "can you restart for me?",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "i want to do restart",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "delete that and start again",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "please do restarting",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "i need to begin over and restart",
+      "intent": "Utilities.StartOver",
+      "entities": []
+    },
+    {
+      "text": "let it finished please",
+      "intent": "Utilities.FinishTask",
+      "entities": []
+    },
+    {
+      "text": "dog to berlin",
+      "intent": "AnimalTransportation",
+      "entities": [
+        {
+          "entity": "Animal",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "To",
+          "startPos": 4,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "little mice from san diego",
+      "intent": "AnimalTransportation",
+      "entities": []
+    },
+    {
+      "text": "i travel with big dog from moscow to berlin",
+      "intent": "AnimalTransportation",
+      "entities": [
+        {
+          "entity": "Animal",
+          "startPos": 18,
+          "endPos": 20
+        },
+        {
+          "entity": "From",
+          "startPos": 22,
+          "endPos": 25
+        },
+        {
+          "entity": "To",
+          "startPos": 34,
+          "endPos": 35
+        }
+      ]
+    },
+    {
+      "text": "animal from paris to seattle",
+      "intent": "AnimalTransportation",
+      "entities": [
+        {
+          "entity": "Animal",
+          "startPos": 0,
+          "endPos": 5
+        },
+        {
+          "entity": "From",
+          "startPos": 7,
+          "endPos": 10
+        },
+        {
+          "entity": "To",
+          "startPos": 18,
+          "endPos": 19
+        }
+      ]
+    },
+    {
+      "text": "how much for 3 kg parrot from london to moscow",
+      "intent": "AnimalTransportation",
+      "entities": [
+        {
+          "entity": "Animal",
+          "startPos": 18,
+          "endPos": 23
+        },
+        {
+          "entity": "Weight",
+          "startPos": 13,
+          "endPos": 16
+        },
+        {
+          "entity": "From",
+          "startPos": 25,
+          "endPos": 28
+        },
+        {
+          "entity": "To",
+          "startPos": 37,
+          "endPos": 38
+        },
+        {
+          "entity": "WeightUnit",
+          "startPos": 15,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "cat to washington from moscow",
+      "intent": "AnimalTransportation",
+      "entities": [
+        {
+          "entity": "Animal",
+          "startPos": 0,
+          "endPos": 2
+        },
+        {
+          "entity": "From",
+          "startPos": 18,
+          "endPos": 21
+        },
+        {
+          "entity": "To",
+          "startPos": 4,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "what is the cost of transportation of 8 kg cat from cairo to moscow",
+      "intent": "AnimalTransportation",
+      "entities": [
+        {
+          "entity": "Animal",
+          "startPos": 43,
+          "endPos": 45
+        },
+        {
+          "entity": "Weight",
+          "startPos": 38,
+          "endPos": 41
+        },
+        {
+          "entity": "From",
+          "startPos": 47,
+          "endPos": 50
+        },
+        {
+          "entity": "To",
+          "startPos": 58,
+          "endPos": 59
+        },
+        {
+          "entity": "WeightUnit",
+          "startPos": 40,
+          "endPos": 41
+        }
+      ]
+    },
+    {
+      "text": "8 kg",
+      "intent": "Weight",
+      "entities": [
+        {
+          "entity": "WeightUnit",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "50 60 70",
+      "intent": "Dimension",
+      "entities": []
+    },
+    {
+      "text": "100 20",
+      "intent": "Dimension",
+      "entities": []
+    }
+  ]
+}
