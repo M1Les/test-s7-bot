@@ -11,7 +11,8 @@ using testSibiraBot2.Services;
 
 namespace testSibiraBot2.Dialogs
 {
-    [LuisModel("13ba4fe3-37d5-4cf9-a106-e746a641b2c5", "268cb802b893461591e26a07c2dac50f", staging: true)]
+    //[LuisModel("13ba4fe3-37d5-4cf9-a106-e746a641b2c5", "268cb802b893461591e26a07c2dac50f", staging: true)]
+    [LuisModel("77ee5d67-00df-4f2a-8c9f-8db37e3011b6", "e5f0c512f3c44c37830031ff4a6378f2")]
     [Serializable]
     public class BaggageLuisDialog : SibiraLuisDialog<Object>
     {

@@ -59,6 +59,11 @@ public static class LuisHelpers {
         return (lr?.Entities?.Scored() ?? new EntityRecommendation[0]).ToArray();
     }
 
+    public static EntityRecommendation[] ScoreEntities(this LuisResult lr, double threshold)
+    {
+        return (lr?.Entities?.Scored(threshold) ?? new EntityRecommendation[0]).ToArray();
+    }
+
     private const String ConfidenceDefault = "High";
 
     public const String BuiltInGeographyCity = "builtin.geography.city";
@@ -100,6 +105,46 @@ public static class LuisHelpers {
                 
             .Select(res => isCountry ? 
                 res.Address?.CountryRegion : 
+                ((true == cityFullName) ? $"{res.Address?.Locality}, {res.Address?.CountryRegion}" : $"{res.Address?.Locality}"))
+            .Where(name => false == String.IsNullOrEmpty(name)).FirstOrDefault();
+
+        return (normalized, source);
+    }
+
+    async public static Task<(String normalized, EntityRecommendation entity)> NormalizeGeographyPredictive(this EntityRecommendation source,
+        String confidence = ConfidenceDefault, bool cityFullName = true)
+    {
+        var resultNone = (null as String, source);
+
+        if (null == source) { return resultNone; }
+        confidence = confidence ?? ConfidenceDefault;
+
+        //var isCity = BuiltInGeographyCity.Equals(source.Type, StringComparison.InvariantCultureIgnoreCase);
+        //var isCountry = BuiltInGeographyCountry.Equals(source.Type, StringComparison.InvariantCultureIgnoreCase);
+        //if ((false == isCity) && (false == isCountry)) { return resultNone; }
+
+        // ((BingMapsRESTToolkit.Location)(r.ResourceSets[0x00000000].Resources[0x00000000])).Address.CountryRegion
+        // ((BingMapsRESTToolkit.Location)(r.ResourceSets[0x00000000].Resources[0x00000000])).Confidence
+        // r.StatusCode
+        // r.errorDetails
+
+        // ReSharper disable once ReplaceWithSingleCallToFirstOrDefault
+        var normalized = new[]
+            {
+                await ServiceManager.GetResponseAsync(new GeocodeRequest()
+                {
+                    BingMapsKey = BingMapsKeyMsTeam, Culture = "ru-ru", Query = source.Entity
+                })
+            }.Where(resp => 200 == resp.StatusCode)
+
+            .SelectMany(resp => resp.ResourceSets).SelectMany(rs => rs.Resources)
+            .OfType<Location>()
+
+            .Where(res => confidence.Equals(res.Confidence, StringComparison.InvariantCultureIgnoreCase))
+            //.Where(res => "CountryRegion".Equals(res.EntityType, StringComparison.InvariantCultureIgnoreCase))
+
+            .Select(res => string.IsNullOrEmpty(res.Address?.Locality) ?
+                 res.Address?.CountryRegion :
                 ((true == cityFullName) ? $"{res.Address?.Locality}, {res.Address?.CountryRegion}" : $"{res.Address?.Locality}"))
             .Where(name => false == String.IsNullOrEmpty(name)).FirstOrDefault();
 

@@ -25,7 +25,9 @@ namespace testSibiraBot2.Dialogs
     using Microsoft.Bot.Connector;
 
     //[LuisModel("33e15373-7746-4975-8347-2ec9d2f930d8", "268cb802b893461591e26a07c2dac50f")]
-    [LuisModel("13ba4fe3-37d5-4cf9-a106-e746a641b2c5", "268cb802b893461591e26a07c2dac50f", staging: true)]
+    //[LuisModel("13ba4fe3-37d5-4cf9-a106-e746a641b2c5", "268cb802b893461591e26a07c2dac50f", staging: true)]
+    //[LuisModel("77ee5d67-00df-4f2a-8c9f-8db37e3011b6", "e5f0c512f3c44c37830031ff4a6378f2")]
+    [LuisModel("77ee5d67-00df-4f2a-8c9f-8db37e3011b6", "e5f0c512f3c44c37830031ff4a6378f2")]
     [Serializable]
     public class AnimalsLuisDialog : SibiraLuisDialog<Object>
     {
@@ -52,6 +54,7 @@ namespace testSibiraBot2.Dialogs
 
         async protected override Task NextAction(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
         {
+            System.Diagnostics.Trace.TraceInformation($"Luis query: {result.Query}. Entities: [{string.Join(",",result.Entities.Select(e=> $"{{{e.Type}, {e.Entity}}}").ToArray())}]");
             switch (_state)
             {
                 case StateMachine.Initial:
@@ -78,12 +81,18 @@ namespace testSibiraBot2.Dialogs
                     _state = StateMachine.WeightResponse;
                     
                     await context.PostAsync($"Укажите вес животного:");
-                    context.Wait(this.ResponseTranslateWhenIntent);
+                    //PromptDialog.Number(context, this.PromptResponseWeight, "Укажите вес животного в килограммах");
+                   
+                    //goto case StateMachine.Weight;
+
+                    context.Wait(this.ResponseMessageReceived);
                     break;
 
                 case StateMachine.WeightResponse:
-                    if (I.Weight != result.TopScoringIntent.Intent) { await CantUnderstand(context); }
-                    else { await IntentWeight(context, result); }
+                    //if (I.Weight != result.TopScoringIntent.Intent) { await CantUnderstand(context); }
+                    //else {
+                        await IntentWeight(context, result);
+                    //}
                     
                     goto case StateMachine.Weight;
 
@@ -97,8 +106,10 @@ namespace testSibiraBot2.Dialogs
                     break;
 
                 case StateMachine.DimensionResponse:
-                    if (I.Dimension != result.TopScoringIntent.Intent) { await CantUnderstand(context); }
-                    else { await IntentDimension(context, result); }
+                    //if (I.Dimension != result.TopScoringIntent.Intent) { await CantUnderstand(context); }
+                    //else {
+                        await IntentDimension(context, result);
+                    //}
                     
                     goto case StateMachine.Dimension;
 
@@ -150,9 +161,10 @@ namespace testSibiraBot2.Dialogs
 
                 case StateMachine.LocationFromResponse:
                     {
-                        var n = await LuisHelpers.ProcessLocation(result.ScoreEntitiesGeography());
-                        if (true == n.isProcessed) { _model.LocationFrom = n.geo?.normalized; }
-                        else { await CantUnderstand(context); }
+                        //var n = await LuisHelpers.ProcessLocation(result.ScoreEntitiesGeography());
+                        //if (true == n.isProcessed) { _model.LocationFrom = n.geo?.normalized; }
+                        await ProcessGeoFromPredictive(new EntityRecommendation[] { new EntityRecommendation("PlaceName", entity: result.Query) }, _model);
+                        if (!_model.IsLocationFromValid) { await CantUnderstand(context); }
                     }
 
                     goto case StateMachine.LocationFrom;
@@ -168,9 +180,11 @@ namespace testSibiraBot2.Dialogs
 
                 case StateMachine.LocationToResponse:
                     {
-                        var n = await LuisHelpers.ProcessLocation(result.ScoreEntitiesGeography());
-                        if (true == n.isProcessed) { _model.LocationTo = n.geo?.normalized; }
-                        else { await CantUnderstand(context); }
+                        //var n = await LuisHelpers.ProcessLocation(result.ScoreEntitiesGeography());
+                        //if (true == n.isProcessed) { _model.LocationTo = n.geo?.normalized; }
+                        await ProcessGeoToPredictive(new EntityRecommendation[] { new EntityRecommendation("DestinationPlaceName", entity: result.Query) }, _model);
+
+                        if (!_model.IsLocationToValid) { await CantUnderstand(context); }
                     }
 
                     goto case StateMachine.LocationTo;
@@ -252,22 +266,41 @@ namespace testSibiraBot2.Dialogs
             ProcessWeight(entitiesScored, _model);
 
             //
+            ProcessAnimalLocationType(entitiesScored, _model);
+
+            //
             var nGeography = (await Task.WhenAll(entitiesGeographyScored.Take(2).Select(er => er.NormalizeGeography()))).Where(n => null != n.normalized).ToArray();
 
             var nFrom = entitiesScored.GetGeographyNextToEntity("From", nGeography);
             _model.LocationFrom = nFrom?.normalized;
 
+            if (!_model.IsLocationFromValid)
+            {
+                await ProcessGeoFromPredictive(result.Entities.ToArray(), _model);
+            }
+
             var nTo = entitiesScored.GetGeographyNextToEntity("To", nGeography);
             _model.LocationTo = nTo?.normalized;
+
+            if (!_model.IsLocationToValid)
+            {
+                await ProcessGeoToPredictive(result.Entities.ToArray(), _model);
+            }
 
             _model.LocationsUnknown = nGeography.Where(n => (n.entity != nFrom?.entity) && (n.entity != nTo?.entity)).Select(n => n.normalized).ToArray();
 
             await context.PostAsync($"Я вижу, что Вы интересуетесь тарифами и правилами перевозки животных");
         }
 
+        //async public Task PromptResponseWeight(IDialogContext context, IAwaitable<long> weightResponse)
+        //{
+        //    _model.Weight = new M.Weight(new M.WeightValue(Convert.ToDecimal(await weightResponse, CultureInfo.InvariantCulture)), "кг");
+        //    await NextAction(context, null, null);
+        //}
+
         async public Task IntentWeight(IDialogContext context, LuisResult result)
         {
-            ProcessWeight(result.ScoreEntities(), _model);
+            ProcessWeight(result.ScoreEntities(0.5), _model);
         }
 
         async public Task IntentDimension(IDialogContext context, LuisResult result)
@@ -283,6 +316,46 @@ namespace testSibiraBot2.Dialogs
             }
             catch(OverflowException oex) {
                 Debug.WriteLine(oex);
+            }
+        }
+
+        public async Task ProcessGeoFromPredictive(EntityRecommendation[] entities, M.Model model)
+        {
+            if (null == model) { throw new ArgumentNullException(nameof(model)); }
+
+            var locationNormalizedGeo = await entities.ByType("PlaceName").FirstOrDefault().NormalizeGeographyPredictive();
+            if (locationNormalizedGeo.normalized != null)
+            {
+                _model.LocationFrom = locationNormalizedGeo.normalized;
+            }
+        }
+
+        public async Task ProcessGeoToPredictive(EntityRecommendation[] entities, M.Model model)
+        {
+            if (null == model) { throw new ArgumentNullException(nameof(model)); }
+
+            var destinationNormalizedGeo = await entities.ByType("DestinationPlaceName").FirstOrDefault().NormalizeGeographyPredictive();
+            if (destinationNormalizedGeo.normalized != null)
+            {
+                _model.LocationTo = destinationNormalizedGeo.normalized;
+            }
+        }
+
+        private static void ProcessAnimalLocationType(EntityRecommendation[] entities, M.Model model)
+        {
+            if (null == model) { throw new ArgumentNullException(nameof(model)); }
+
+            var eLuggageLocation = entities.ByType("AnimalLocationType").FirstOrDefault();
+            if (null != eLuggageLocation)
+            {
+                if (eLuggageLocation.Entity.Equals(TravelTypeCabinEn, StringComparison.OrdinalIgnoreCase))
+                {
+                    model.TravelType = M.TravelType.Cabin;
+                }
+                else if (eLuggageLocation.Entity.Equals(TravelTypeCheckedInEn, StringComparison.OrdinalIgnoreCase))
+                {
+                    model.TravelType = M.TravelType.CheckedIn;
+                }
             }
         }
 
@@ -306,9 +379,9 @@ namespace testSibiraBot2.Dialogs
                 var eValue = entities.ByType("builtin.number").FirstOrDefault();
                 var eUnit = entities.ByType("WeightUnit").FirstOrDefault();
 
-                if ((null != eValue) && (null != eUnit) && (eUnit.StartIndex == (eValue.EndIndex + 2)))
+                if ((null != eValue) /*&& (null != eUnit) && (eUnit.StartIndex == (eValue.EndIndex + 2))*/)
                 {
-                    model.Weight = new M.Weight(new M.WeightValue(Convert.ToDecimal(eValue.Entity, CultureInfo.InvariantCulture)), eUnit.Entity);
+                    model.Weight = new M.Weight(new M.WeightValue(Convert.ToDecimal(eValue.Entity, CultureInfo.InvariantCulture)), eUnit?.Entity??"кг");
                 }
             }
         }
@@ -351,6 +424,8 @@ namespace testSibiraBot2.Dialogs
 
         private const String TravelTypeCabin = "В салоне самолёта";
         private const String TravelTypeCheckedIn = "В багажном отсеке";
+        private const String TravelTypeCabinEn = "cabin";
+        private const String TravelTypeCheckedInEn = "baggage compartment";
         private const String ValidationOk = "Всё правильно";
         private const String ValidationError = "Есть ошибка";
 
@@ -521,7 +596,7 @@ namespace testSibiraBot2.Dialogs
             yield return new Fact("Животное", m?.Animal ?? M.NoData);
             yield return new Fact("Вес", (null != m?.Weight) ? $"{m.Weight.Value} {m.Weight.Unit}" : M.NoData);
             
-            yield return new Fact("Размеры клетки");
+            yield return new Fact("Размеры клетки", "");
             yield return new Fact("Длина", FactValueFromDimension(m?.DimLength));
             yield return new Fact("Ширина", FactValueFromDimension(m?.DimWidth));
             yield return new Fact("Высота", FactValueFromDimension(m?.DimHeight));
@@ -529,14 +604,14 @@ namespace testSibiraBot2.Dialogs
             switch (m?.TravelType)
             {
                 case M.TravelType.Cabin:
-                    yield return new Fact("Перевозка в салоне самолёта");                    
+                    yield return new Fact("Перевозка в салоне самолёта", "");                    
                     break;
                 case M.TravelType.CheckedIn:
-                    yield return new Fact("Перевозка в багажном отсеке");
+                    yield return new Fact("Перевозка в багажном отсеке", "");
                     break;
             }
 
-            yield return new Fact("Маршрут");            
+            yield return new Fact("Маршрут", "");            
             yield return new Fact("Вылет", m?.LocationFrom ?? M.NoData);
             yield return new Fact("Прилёт", m?.LocationTo ?? M.NoData);
         }

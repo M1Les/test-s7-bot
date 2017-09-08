@@ -1,7 +1,10 @@
 ﻿ngrok http -subdomain=sibirabot -host-header=localhost 3979
 ngrok http -host-header=localhost 3979
 
+ /deleteprofile
 
+https://stackoverflow.com/questions/38276466/trigger-system-messages-in-microsoft-bot-framework-v3/38333901#38333901
+https://github.com/Microsoft/BotBuilder/issues/101
 
 мы везем кошку на 8 кг в париж
 мы везем кошку на 8 кг из москвы в париж
