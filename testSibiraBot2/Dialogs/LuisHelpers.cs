@@ -201,7 +201,8 @@ public static class LuisHelpers {
     }
     
     private const String TranslateSubscriptionKeyMsTeam = @"5308420aa9584eaeb1570b2f00bdee7e";
-    async public static Task<String> Translate(this String message)
+
+    async public static Task<String> Translate(this String message, string toLang = "en")
     {
         if (null == message) { message = String.Empty; }
 
@@ -225,7 +226,7 @@ public static class LuisHelpers {
 
                     ocx.OutgoingMessageProperties[HttpRequestMessageProperty.Name] = mprop;
 
-                    var textOnEnglish = await tr.TranslateAsync(String.Empty, message, String.Empty, "en", @"text/plain",
+                    var textOnEnglish = await tr.TranslateAsync(String.Empty, message, String.Empty, toLang, @"text/plain",
                         String.Empty,
                         String.Empty);
                     result = textOnEnglish;

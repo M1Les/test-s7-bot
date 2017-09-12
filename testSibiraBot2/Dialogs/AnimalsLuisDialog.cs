@@ -254,13 +254,13 @@ namespace testSibiraBot2.Dialogs
 
         async public Task IntentAnimalTransportation(IDialogContext context, LuisResult result)
         {
-            var entitiesScored = result.ScoreEntities();
+            var entitiesScored = result.ScoreEntities(0.3);
             //var centitiesScored = (result?.CompositeEntities?.Scored() ?? new EntityRecommendation[0]).ToArray();
             var entitiesGeographyScored = result.ScoreEntitiesGeography();
 
             //
             var eAnimal = entitiesScored.ByType("Animal").FirstOrDefault();
-            _model.Animal = eAnimal?.Entity;
+            _model.Animal = await eAnimal?.Entity.Translate("ru");
 
             //
             ProcessWeight(entitiesScored, _model);
