@@ -190,19 +190,77 @@ namespace testSibiraBot2.Dialogs
                     goto case StateMachine.LocationTo;
 
                 case StateMachine.Validation:
-                    _state = StateMachine.ValidationResponse;                    
+                    _state = StateMachine.ValidationResponse;
                     {
+                        var card = new AdaptiveCards.AdaptiveCard() {
+                            Body = new List<AdaptiveCards.CardElement>() {
+                                new AdaptiveCards.TextBlock() {
+                                    Text = $"Проверьте, пожалуйста, правильно ли я всё понял:",
+                                    Size = AdaptiveCards.TextSize.Medium,
+                                    Weight = AdaptiveCards.TextWeight.Bolder,
+                                    IsSubtle = false
+                                },
+                                new AdaptiveCards.ColumnSet() {
+                                    Separation = AdaptiveCards.SeparationStyle.Strong,
+                                    Columns = new List<AdaptiveCards.Column>(){
+                                        new AdaptiveCards.Column(){
+                                            Size = "1",
+                                            Items = new List<AdaptiveCards.CardElement>(){
+                                                new AdaptiveCards.TextBlock(){
+                                                    Text = _model.LocationFrom,
+                                                    Size = AdaptiveCards.TextSize.ExtraLarge,
+                                                    Color = AdaptiveCards.TextColor.Accent
+                                                }
+                                            }
+                                        },
+                                        new AdaptiveCards.Column(){
+                                            Size = "auto",
+                                            Items = new List<AdaptiveCards.CardElement>(){
+                                                new AdaptiveCards.Image(){
+                                                    Url = "http://messagecardplayground.azurewebsites.net/assets/airplane.png",
+                                                    Size = AdaptiveCards.ImageSize.Small
+                                                }
+                                            }
+                                        },
+                                        new AdaptiveCards.Column(){
+                                            Size = "1",
+                                            Items = new List<AdaptiveCards.CardElement>(){
+                                                new AdaptiveCards.TextBlock(){
+                                                    Text = _model.LocationTo,
+                                                    Size = AdaptiveCards.TextSize.ExtraLarge,
+                                                    Color = AdaptiveCards.TextColor.Accent,
+                                                    HorizontalAlignment = AdaptiveCards.HorizontalAlignment.Right
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            Actions = new List<AdaptiveCards.ActionBase>() {
+                                new AdaptiveCards.SubmitAction(){ Title = ValidationOk, Data = ValidationOk },
+                                new AdaptiveCards.SubmitAction(){ Title = ValidationError, Data = ValidationError }
+                            }
+                        };
+
                         var m = context.MakeMessage();
+
+                        //m.Attachments.Add(new Attachment()
+                        //{
+                        //    ContentType = AdaptiveCards.AdaptiveCard.ContentType,
+                        //    Content = card
+                        //});
+
                         m.Attachments.Add(
-                            new ReceiptCard(title:$"Проверьте, пожалуйста, правильно ли я всё понял:",
+                            new ReceiptCard(title: $"Проверьте, пожалуйста, правильно ли я всё понял:",
                                 facts: FactsFromModel(_model).ToArray(),
-                                buttons: new []
+                                buttons: new[]
                                 {
                                     new CardAction(ActionTypes.ImBack, title: ValidationOk, value: ValidationOk),
                                     new CardAction(ActionTypes.ImBack, title: ValidationError, value: ValidationError),
                                 },
-                                total:"---" // HACK: stupid Windows Desktop Skype don't show Receipt Card without total field
-                                ).ToAttachment());
+                                total: "---" // HACK: stupid Windows Desktop Skype don't show Receipt Card without total field
+                                ).ToAttachment()
+                        );
                         await context.PostAsync(m);                        
                     }                    
                     context.Wait(this.ResponseMessageReceived);
@@ -255,12 +313,12 @@ namespace testSibiraBot2.Dialogs
         async public Task IntentAnimalTransportation(IDialogContext context, LuisResult result)
         {
             var entitiesScored = result.ScoreEntities(0.3);
-            //var centitiesScored = (result?.CompositeEntities?.Scored() ?? new EntityRecommendation[0]).ToArray();
+            //var entitiesScored = (result?.CompositeEntities?.Scored() ?? new EntityRecommendation[0]).ToArray();
             var entitiesGeographyScored = result.ScoreEntitiesGeography();
 
             //
             var eAnimal = entitiesScored.ByType("Animal").FirstOrDefault();
-            _model.Animal = await eAnimal?.Entity.Translate("ru");
+            _model.Animal = await (eAnimal?.Entity ?? "").Translate("ru");
 
             //
             ProcessWeight(entitiesScored, _model);
@@ -596,7 +654,7 @@ namespace testSibiraBot2.Dialogs
             yield return new Fact("Животное", m?.Animal ?? M.NoData);
             yield return new Fact("Вес", (null != m?.Weight) ? $"{m.Weight.Value} {m.Weight.Unit}" : M.NoData);
             
-            yield return new Fact("Размеры клетки", "");
+            yield return new Fact("Размеры клетки", "-");
             yield return new Fact("Длина", FactValueFromDimension(m?.DimLength));
             yield return new Fact("Ширина", FactValueFromDimension(m?.DimWidth));
             yield return new Fact("Высота", FactValueFromDimension(m?.DimHeight));
@@ -604,14 +662,14 @@ namespace testSibiraBot2.Dialogs
             switch (m?.TravelType)
             {
                 case M.TravelType.Cabin:
-                    yield return new Fact("Перевозка в салоне самолёта", "");                    
+                    yield return new Fact("Перевозка в салоне самолёта", "-");                    
                     break;
                 case M.TravelType.CheckedIn:
-                    yield return new Fact("Перевозка в багажном отсеке", "");
+                    yield return new Fact("Перевозка в багажном отсеке", "-");
                     break;
             }
 
-            yield return new Fact("Маршрут", "");            
+            yield return new Fact("Маршрут", "-");            
             yield return new Fact("Вылет", m?.LocationFrom ?? M.NoData);
             yield return new Fact("Прилёт", m?.LocationTo ?? M.NoData);
         }

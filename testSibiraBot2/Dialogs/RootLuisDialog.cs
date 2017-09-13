@@ -71,7 +71,7 @@ namespace testSibiraBot2.Dialogs
                             return;
                     }
                     
-                    await context.PostAsync($"Извините, но я не могу понять Ваш вопрос. Я не искуственный интеллект, я только учусь... Но я собаку съел на тарифах транспортировки животных и багажа. Спрашивайте -- помогу!");
+                    await context.PostAsync($"Я не искуственный интеллект, я только учусь... Но я собаку съел на тарифах транспортировки животных и багажа. Спрашивайте -- помогу!");
                     goto case StateMachine.Initial;
 
                 case StateMachine.AnimalTransportationCompleted:
